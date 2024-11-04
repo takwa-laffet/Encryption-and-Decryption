@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encryption and Decryption Tool</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f2f2f2;
+    }
+    #container {
+        text-align: center;
+    }
+    #encrypt, #decrypt, #clear {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    #inputText, #outputText {
+        width: 300px;
+        height: 50px;
+        margin: 10px;
+        padding: 5px;
+        font-size: 16px;
+    }
+</style>
+</head>
+<body>
+
+<div id="container">
+    <textarea id="inputText" placeholder="Enter text..."></textarea><br>
+    <select id="algorithm">
+        <option value="AES">AES</option>
+        <option value="SHA-256">SHA-256 (Hash)</option>
+    </select><br><br>
+    <button id="encrypt">Encrypt</button>
+    <button id="decrypt">Decrypt</button>
+    <button id="clear">Clear</button><br>
+    <textarea id="outputText" placeholder="Result..."></textarea>
+</div>
+
+<script>
+    function encryptAES(text, key) {
+        return CryptoJS.AES.encrypt(text, key).toString();
+    }
+
+    function decryptAES(ciphertext, key) {
+        const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+        return bytes.toString(CryptoJS.enc.Utf8);
+    }
+
+    function hashSHA256(text) {
+        return CryptoJS.SHA256(text).toString(CryptoJS.enc.Hex);
+    }
+
+    document.getElementById('encrypt').addEventListener('click', function() {
+        const inputText = document.getElementById('inputText').value;
+        const algorithm = document.getElementById('algorithm').value;
+        let outputText = '';
+
+        if (algorithm === 'AES') {
+            const key = prompt("Enter a password for AES encryption:");
+            outputText = encryptAES(inputText, key);
+        } else if (algorithm === 'SHA-256') {
+            outputText = hashSHA256(inputText);
+        }
+
+        document.getElementById('outputText').value = outputText;
+    });
+
+    document.getElementById('decrypt').addEventListener('click', function() {
+        const inputText = document.getElementById('inputText').value;
+        const algorithm = document.getElementById('algorithm').value;
+        let outputText = '';
+
+        if (algorithm === 'AES') {
+            const key = prompt("Enter the password for AES decryption:");
+            outputText = decryptAES(inputText, key);
+        } else {
+            alert("SHA-256 is a hash function and cannot be decrypted.");
+        }
+
+        document.getElementById('outputText').value = outputText;
+    });
+
+    document.getElementById('clear').addEventListener('click', function() {
+        document.getElementById('inputText').value = '';
+        document.getElementById('outputText').value = '';
+    });
+</script>
+
+</body>
+</html>
